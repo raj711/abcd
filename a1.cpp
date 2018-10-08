@@ -3,8 +3,8 @@
 #define ll long long
 #define mp make_pair
 #define pb push_back
-#define endl '\n'
 #define int long long
+#define endl '\n'
 #define pi 3.1415926536
 using namespace std;
 
@@ -15,65 +15,49 @@ ll mul(ll a,ll b){ll x = (a%mod * b%mod)%mod; return x; }
 ll sub(ll a,ll b){ll x = (a-b+mod)%mod; return x; }
 ll divi(ll a,ll b){ll x = a;ll y = powermod(b,mod-2,mod);ll res = (x*y)%mod;return res;}
 
-vector<vector<int>>adj[2000000];
-int pow1(int a, ll b, ll c) {
-        if (b == 0)
-            return 1;
-        ll p = pow1(a, b / 2, c);
-        p = (p * p) % c;
-        return (b % 2 == 0) ? p : (a * p) % c;
-    }        
-int dfs(int c,int size[], int fact[]){
-    size[c]=1;
-    int cc=1;
-    
-    for(auto a:adj[c]){
-        int val=dfs(a,size,fact);
-        size[c]+=size[a];
-        cc=mul(cc,pow1(fact[size[a]],mod-2,mod));
-        cc=mul(cc,val);
-    }
-    cc=mul(cc,fact[size[c]-1]);
-    return cc;
-}
+
 
 int32_t main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     
-    int t;
-    cin>>t;
+    int n,m,b;
+    cin>>m>>n>>b;
     
-    int fact[2000001];
-    fact[0]=1;
-    for(int i=1;i<=2000000;i++){
-        fact[i]=mul(fact[i-1],i);
-    }
-    
-    while(t--){
-        int n,m;
-        cin>>n>>m;
-        int size[n]={0};
-        bool vis[n]={0};
-        adj.clear();        
-        while(m--){
-            
-            int x,y;
-            cin>>x>>y;
-            adj[x-1].pb(y-1);
-            vis[y-1]=1;
-        }
-        int ans=fact[n];
+    int arr[n][m];
+    for(int i=0;i<n;i++)
+        for(int j=0;j<m;j++)
+            cin>>arr[i][j];
+    set<int>st;
+    int temp[n][m];
+    while(b--){
         
         for(int i=0;i<n;i++){
-            if(!vis[i]){
-                ans=mul(ans,dfs(i,size,fact));
-                ans=mul(ans,pow1(fact[size[i]],mod-2,mod));
+            
+            for(int j=0;j<m;j++){
+                int cnt=0;
+                cnt+=arr[i][j];
+                cnt+=arr[i][(j+1+m)%m];
+                cnt+=arr[i][(j-1+m)%m];
+                cnt+=arr[(i-1+n)%n][j];
+                cnt+=arr[(i+1+n)%n][j];
+                cnt+=arr[(i+1+n)%n][(j+1+m)%m];
+                cnt+=arr[(i-1+n)%n][(j+1+m)%m];
+                cnt+=arr[(i+1+n)%n][(j-1+m)%m];
+                cnt+=arr[(i-1+n)%n][(j-1+m)%m];
+                temp[i][j]=cnt;
             }
         }
-        cout<<ans<<endl;
+        for(int i=0;i<n;i++)
+            for(int j=0;j<m;j++)
+                arr[i][j]=temp[i][j];
     }
-    
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++){
+            st.insert(arr[i][j]);
+        }
+    }
+    cout<<(int)st.size()<<endl;
     return 0;
 }
